@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol
         private const int LF = 0x0A;
         private static string[] NewLineDelimiters = new string[] { Environment.NewLine }; 
 
-        private Stream inputStream;
+        private IStreamReader streamReader;
         private IMessageSerializer messageSerializer;
         private Encoding messageEncoding;
 
@@ -52,11 +52,19 @@ namespace Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol
             Stream inputStream,
             IMessageSerializer messageSerializer,
             Encoding messageEncoding = null)
+             : this(new DefaultStreamReader(inputStream), messageSerializer, messageEncoding)
         {
-            Validate.IsNotNull("inputStream", inputStream);
+        }
+
+        public MessageReader(
+            IStreamReader streamReader,
+            IMessageSerializer messageSerializer,
+            Encoding messageEncoding = null)
+        {
+            Validate.IsNotNull("streamReader", streamReader);
             Validate.IsNotNull("messageSerializer", messageSerializer);
 
-            this.inputStream = inputStream;
+            this.streamReader = streamReader;
             this.messageSerializer = messageSerializer;
 
             this.messageEncoding = messageEncoding;
@@ -135,7 +143,7 @@ namespace Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol
 
             // Read the next chunk into the message buffer
             int readLength =
-                await this.inputStream.ReadAsync(
+                await this.streamReader.ReadAsync(
                     this.messageBuffer,
                     this.bufferEndOffset,
                     this.messageBuffer.Length - this.bufferEndOffset);
@@ -255,6 +263,25 @@ namespace Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol
             this.readState = ReadState.Headers;
 
             return true;
+        }
+
+        #endregion
+
+        #region Private Classes
+
+        private class DefaultStreamReader : IStreamReader
+        {
+            private Stream inputStream;
+
+            public DefaultStreamReader(Stream inputStream)
+            {
+                this.inputStream = inputStream;
+            }
+
+            public Task<int> ReadAsync(byte[] buffer, int offset, int count)
+            {
+                return this.inputStream.ReadAsync(buffer, offset, count);
+            }
         }
 
         #endregion

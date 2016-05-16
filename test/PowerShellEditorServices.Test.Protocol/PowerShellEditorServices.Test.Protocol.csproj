@@ -11,11 +11,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.PowerShell.EditorServices.Test.Protocol</RootNamespace>
     <AssemblyName>Microsoft.PowerShell.EditorServices.Test.Protocol</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>69e9ba79</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,6 +68,7 @@
     <Compile Include="DebugAdapter\V8MessageSerializerTests.cs" />
     <Compile Include="LanguageServer\JsonRpcMessageSerializerTests.cs" />
     <Compile Include="Message\MessageReaderWriterTests.cs" />
+    <Compile Include="Message\NamedPipeChannelTests.cs" />
     <Compile Include="Message\TestMessageTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\OutputDebouncerTests.cs" />

@@ -4,6 +4,7 @@
 //
 
 using Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol;
+using Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol.Channel;
 using Microsoft.PowerShell.EditorServices.Protocol.Server;
 using Microsoft.PowerShell.EditorServices.Session;
 using Microsoft.PowerShell.EditorServices.Utility;
@@ -158,7 +159,7 @@ namespace Microsoft.PowerShell.EditorServices.Host
             ProtocolEndpoint server =
                 runDebugAdapter
                 ? (ProtocolEndpoint) new DebugAdapter(hostDetails)
-                : (ProtocolEndpoint) new LanguageServer(hostDetails);
+                : (ProtocolEndpoint) new LanguageServer(hostDetails, new NamedPipeServerChannel("PSES-LanguageServer"));
 
             // Start the server
             server.Start().Wait();

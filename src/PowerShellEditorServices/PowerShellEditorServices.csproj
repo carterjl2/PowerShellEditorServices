@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.PowerShell.EditorServices</RootNamespace>
     <AssemblyName>Microsoft.PowerShell.EditorServices</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -23,6 +23,7 @@
     <!-- of these versions for anything that should work against both APIs.          -->
     <DefineConstants Condition="'$(PowerShellVersion)' == 'v5r1'">$(DefineConstants);PowerShellv5r1;PowerShellv5</DefineConstants>
     <DefineConstants Condition="'$(PowerShellVersion)' == 'v5r2' Or '$(PowerShellVersion)' == ''">$(DefineConstants);PowerShellv5r2;PowerShellv5</DefineConstants>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

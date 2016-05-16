@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System;
 
 namespace Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol
 {
@@ -16,7 +17,7 @@ namespace Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol
     {
         #region Private Fields
 
-        private Stream outputStream;
+        private IStreamWriter streamWriter;
         private IMessageSerializer messageSerializer;
         private AsyncLock writeLock = new AsyncLock();
 
@@ -31,11 +32,18 @@ namespace Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol
         public MessageWriter(
             Stream outputStream,
             IMessageSerializer messageSerializer)
+                : this(new DefaultStreamWriter(outputStream), messageSerializer)
         {
-            Validate.IsNotNull("outputStream", outputStream);
+        }
+
+        public MessageWriter(
+            IStreamWriter streamWriter,
+            IMessageSerializer messageSerializer)
+        {
+            Validate.IsNotNull("streamWriter", streamWriter);
             Validate.IsNotNull("messageSerializer", messageSerializer);
 
-            this.outputStream = outputStream;
+            this.streamWriter = streamWriter;
             this.messageSerializer = messageSerializer;
         }
 
@@ -82,9 +90,9 @@ namespace Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol
             using (await this.writeLock.LockAsync())
             {
                 // Send the message
-                await this.outputStream.WriteAsync(headerBytes, 0, headerBytes.Length);
-                await this.outputStream.WriteAsync(messageBytes, 0, messageBytes.Length);
-                await this.outputStream.FlushAsync();
+                await this.streamWriter.WriteAsync(headerBytes, 0, headerBytes.Length);
+                await this.streamWriter.WriteAsync(messageBytes, 0, messageBytes.Length);
+                await this.streamWriter.FlushAsync();
             }
         }
 
@@ -133,6 +141,30 @@ namespace Microsoft.PowerShell.EditorServices.Protocol.MessageProtocol
                 Message.Event(
                     eventType.MethodName,
                     contentObject));
+        }
+
+        #endregion
+
+        #region Private Classes
+
+        private class DefaultStreamWriter : IStreamWriter
+        {
+            private Stream outputStream;
+
+            public DefaultStreamWriter(Stream outputStream)
+            {
+                this.outputStream = outputStream;
+            }
+
+            public Task FlushAsync()
+            {
+                return this.outputStream.FlushAsync();
+            }
+
+            public Task WriteAsync(byte[] buffer, int offset, int count)
+            {
+                return this.outputStream.WriteAsync(buffer, offset, count);
+            }
         }
 
         #endregion
